@@ -15,6 +15,7 @@
 
 # built--in
 import logging
+import os
 from pathlib import Path
 
 # 3rd party
@@ -27,36 +28,8 @@ from IPython.display import display
 from PIL import Image
 from scipy.spatial import distance as dist
 
-# jeremy's
-import img_qc.img_qc as img_qc
-
 
 # === functions in alphabetical order 
-
-def autocrop(image, autocrop_height=500.0, padding=0):
-    pass
-
-    # load the image with function
-    image = img_qc.open_cv2_image(image)  # allows for Path or string
-    
-    # compute the ratio of the old height to the new height
-    ratio = image.shape[0] / autocrop_height. # (height, width)
-    
-    # clone image
-    original = image.copy()
-    
-    # resize image
-    image = img_qc.get_resized_cv_image(image, height=autocrop_height)
-    
-    # conver the image to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
-    # blur the image
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    
-    # apply Otsu's auto
-
-
 def get_formatted_extension(from_extension):
     """-- Purpose --
     Return an extension with a period at the front
