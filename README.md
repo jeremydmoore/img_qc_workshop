@@ -18,5 +18,5 @@ Windows 10
 Using the Conda packaging system
 -  `conda env create -f environment-mac.yml` or `conda env create -f environment-win10.yml`
 
-*environment-mac.yml & environment-win10.yml both need *
+*environment-mac.yml & environment-win10.yml both need*
  - `conda install scipy`
