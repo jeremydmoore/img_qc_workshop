@@ -17,5 +17,5 @@ Windows 10
 
 Using the Conda packaging system
 
-Currently environment-mac.yml & environment-win10.yml are INCORRECT
-They both need `$ conda install scipy`
+*environment-mac.yml & environment-win10.yml are INCORRECT*
+ - They both still need `$ conda install scipy`
