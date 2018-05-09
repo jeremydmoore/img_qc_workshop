@@ -10,9 +10,10 @@ Todd Peters
 tp09@txstate.edu
 
 
-## Install Instructions Coming
+## Install Instructions
 
 macOS 10.11+ 
+
 Windows 10
 
 Using the Conda packaging system
