@@ -16,7 +16,7 @@ macOS 10.11+
 
 Windows 10
 
-Using the Conda packaging system
+Using the Conda packaging system (install MiniConda if conda system not already installed)
 -  `conda env create -f environment-mac.yml` or `conda env create -f environment-win10.yml`
 
 *environment-mac.yml & environment-win10.yml both need*
