@@ -1,84 +1,38 @@
-# img_qc.py
+# img_qc.py jeremy.moore@txstate.edu under the GNU GPL License: 
+# https://github.com/photosbyjeremy/img_qc_workshop/blob/master/LICENSE
 
-### 2018-02 jeremy.moore@txstate.edu
+### 2018-05 v0.90 ready for TCDL 2018 workshop: Introduction to Image 
+###               Processing with Python and Jupyter Notebooks
+### 2018-02 v0.10 base code copied out of notebooks to import as functions
 
-import cv2
-from IPython.display import Image, display
-import img_qc.exiftool as exiftool
-import ipywidgets as widgets
+############################### TODO: ###############################
+# 1. docstrings
+# 2. logging
+# 3. have separate sections for Pillow and OpenCV functions
+#####################################################################
+
+# === importing
+
+# built--in
 import logging
+from pathlib import Path
+
+# 3rd party
+import ipywidgets as widgets
+import img_qc.exiftool as exiftool
 import numpy as np
 import pandas as pd
-from pathlib import Path
+from PIL import Image
 from scipy.spatial import distance as dist
 
+# jeremy's
+import cv2
+from IPython.display import display
+
+# === functions in alphabetical order 
 
 def autocrop(image, padding=0):
     pass
-
-def rotate(image, angle, center=None, scale=1.0):
-    # grab the dimensions of the image
-    (h, w) = image.shape[:2]
-
-    # if the center is None, initialize it as the center of
-    # the image
-    if center is None:
-        center = (w // 2, h // 2)
-
-    # perform the rotation
-    M = cv2.getRotationMatrix2D(center, angle, scale)
-    rotated = cv2.warpAffine(image, M, (w, h))
-
-    # return the rotated image
-    return rotated
-
-def rotate_bound(image, angle, center=None, scale=1.0):
-    # grab the dimensions of the image and then determine the
-    # center
-    (height, width) = image.shape[:2]
-    
-    # if the center is None, initialize it as the center of
-    # the image
-    if center is None:
-        centerX = (w // 2)
-        centerY = (h // 2)
-    else:
-        centerX, centerY = center
-
-    # grab the rotation matrix (applying the negative of the
-    # angle to rotate clockwise), then grab the sine and cosine
-    # (i.e., the rotation components of the matrix)
-    M = cv2.getRotationMatrix2D((centerX, centerY), -angle, scale)
-    cos = np.abs(M[0, 0])
-    sin = np.abs(M[0, 1])
-
-    # compute the new bounding dimensions of the image
-    width_new = int((height * sin) + (width * cos))
-    height_new = int((height * cos) + (width * sin))
-
-    # adjust the rotation matrix to take into account translation
-    M[0, 2] += (width_new / 2) - centerX
-    M[1, 2] += (height_new / 2) - centerY
-
-    # perform the actual rotation and return the image
-    return cv2.warpAffine(image, M, (width_new, height_new))
-
-
-def open_cv2_image(image_path):
-    """--- Purpose ---
-    TODO
-    
-    --- Arguments ---
-    TODO
-    
-    --- Returns ---
-    TODO"""
-    
-    # set filepath to string
-    image_path = str(image_path)
-    
-    image = cv2.imread(image_path)
-    return image
 
 
 def get_formatted_extension(from_extension):
@@ -278,6 +232,7 @@ def get_images_df(in_directory, with_extension):
     
     return images_df
 
+
 def get_resized_cv_image(from_image, width=None, height=None, inter=cv2.INTER_AREA):
     # initialize the dimensions of the image to be resized and
     # grab the image size
@@ -310,6 +265,55 @@ def get_resized_cv_image(from_image, width=None, height=None, inter=cv2.INTER_AR
     return resized
 
 
+def get_image_resized_pillow(image, width=None, height=None, resample=Image.LANCZOS):
+    # initialize the dimensions of the image to be resized and
+    # grab the image size
+    dimensions = None
+    (starting_width, starting_height) = image.size
+
+    # if both the width and height are None, then return the
+    # original image
+    if width is None and height is None:
+        return image
+
+    # check to see if the width is None
+    if width is None:
+        # calculate the ratio of the height and construct the
+        # dimensions
+        ratio = int(height) / float(starting_height)
+        dimensions = (int(starting_width * ratio)), int(height)
+
+    # otherwise, the height is None
+    else:
+        # calculate the ratio of the width and construct the
+        # dimensions
+        ratio = int(width) / float(starting_width)
+        dimensions = (int(width), int(starting_height * ratio))
+
+    # resize the image
+    image_resized = image.resize(dimensions, resample=resample)
+
+    # return the resized image
+    return image_resized
+
+
+def open_cv2_image(image_path):
+    """--- Purpose ---
+    TODO
+    
+    --- Arguments ---
+    TODO
+    
+    --- Returns ---
+    TODO"""
+    
+    # set filepath to string
+    image_path = str(image_path)
+    
+    image = cv2.imread(image_path)
+    return image
+
+
 def order_points(pts):
     # sort the points based on their x-coordinates
     xSorted = pts[np.argsort(pts[:, 0]), :]
@@ -336,6 +340,55 @@ def order_points(pts):
     # return the coordinates in top-left, top-right,
     # bottom-right, and bottom-left order
     return np.array([tl, tr, br, bl], dtype="float32")
+
+
+def rotate(image, angle, center=None, scale=1.0):
+    # grab the dimensions of the image
+    (h, w) = image.shape[:2]
+
+    # if the center is None, initialize it as the center of
+    # the image
+    if center is None:
+        center = (w // 2, h // 2)
+
+    # perform the rotation
+    M = cv2.getRotationMatrix2D(center, angle, scale)
+    rotated = cv2.warpAffine(image, M, (w, h))
+
+    # return the rotated image
+    return rotated
+
+
+def rotate_bound(image, angle, center=None, scale=1.0):
+    # grab the dimensions of the image and then determine the
+    # center
+    (height, width) = image.shape[:2]
+    
+    # if the center is None, initialize it as the center of
+    # the image
+    if center is None:
+        centerX = (w // 2)
+        centerY = (h // 2)
+    else:
+        centerX, centerY = center
+
+    # grab the rotation matrix (applying the negative of the
+    # angle to rotate clockwise), then grab the sine and cosine
+    # (i.e., the rotation components of the matrix)
+    M = cv2.getRotationMatrix2D((centerX, centerY), -angle, scale)
+    cos = np.abs(M[0, 0])
+    sin = np.abs(M[0, 1])
+
+    # compute the new bounding dimensions of the image
+    width_new = int((height * sin) + (width * cos))
+    height_new = int((height * cos) + (width * sin))
+
+    # adjust the rotation matrix to take into account translation
+    M[0, 2] += (width_new / 2) - centerX
+    M[1, 2] += (height_new / 2) - centerY
+
+    # perform the actual rotation and return the image
+    return cv2.warpAffine(image, M, (width_new, height_new))
 
 
 def sort_contours(contours, method="left-to-right"):
