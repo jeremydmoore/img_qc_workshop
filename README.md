@@ -4,7 +4,7 @@ TCDL 2018 Workshop: Introduction to Image Processing with Python and Jupyter Not
 Austin, TX May 15, 2018
 
 Jeremy Moore
-jeremy.moore@txstate.edu
+alt.photosbyjeremy@gmail.com
 
 Todd Peters
 tp09@txstate.edu
